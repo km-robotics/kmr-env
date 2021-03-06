@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag kmr/env-kinetic:$(date +%s) --tag kmr/env-kinetic:latest
+      run: cd kinetic/docker && docker build . --tag kmr/env-kinetic:$(date +%s) --tag kmr/env-kinetic:latest
