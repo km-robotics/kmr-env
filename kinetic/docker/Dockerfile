@@ -12,7 +12,7 @@ RUN chmod +x linux_runtime_dependencies.sh && ./linux_runtime_dependencies.sh &&
 
 # Webots
 RUN wget -O webots.tar.bz2 "https://github.com/cyberbotics/webots/releases/download/R2020b-rev1/webots-R2020b-rev1-x86-64_ubuntu-16.04.tar.bz2"
-RUN tar -xvjf webots.tar.bz2 -C /opt && rm -rf webots.tar.gz
+RUN tar -xjf webots.tar.bz2 -C /opt && rm -rf webots.tar.gz
 ENV WEBOTS_HOME=/opt/webots
 ENV QTWEBENGINE_DISABLE_SANDBOX=1
 
