@@ -87,7 +87,7 @@ ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs
 # ==== end ====
 
 # ROS packages
-RUN apt install -y \
+RUN apt update && apt install -y \
 ros-kinetic-actionlib-tutorials \
 ros-kinetic-bond \
 ros-kinetic-bond-core \
