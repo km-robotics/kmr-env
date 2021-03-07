@@ -1,14 +1,26 @@
 FROM osrf/ros:kinetic-desktop-full
 
-RUN apt-get update
-RUN apt-get install -y wget curl htop iotop iftop tcpdump byobu mc
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TERM=linux
 
+RUN apt update && apt install -y wget curl htop iotop iftop tcpdump byobu mc
+
+# Webots dependencies
+# from https://github.com/cyberbotics/webots-docker/blob/master/Dockerfile
+RUN wget https://raw.githubusercontent.com/cyberbotics/webots/master/scripts/install/linux_runtime_dependencies.sh
+RUN chmod +x linux_runtime_dependencies.sh && ./linux_runtime_dependencies.sh && rm ./linux_runtime_dependencies.sh
+
+# Webots
 RUN wget -O webots.tar.bz2 "https://github.com/cyberbotics/webots/releases/download/R2020b-rev1/webots-R2020b-rev1-x86-64_ubuntu-16.04.tar.bz2"
-RUN tar -xvjf webots.tar.bz2 -C /opt
-RUN rm -rf webots.tar.gz
+RUN tar -xvjf webots.tar.bz2 -C /opt && rm -rf webots.tar.gz
 ENV WEBOTS_HOME=/opt/webots
+ENV QTWEBENGINE_DISABLE_SANDBOX=1
 
-RUN apt-get install -y \
+# Install X virtual framebuffer to be able to use Webots without GPU and GUI (e.g. CI)
+RUN apt update && apt install --yes xvfb
+
+# ROS packages
+RUN apt install -y \
 ros-kinetic-actionlib-tutorials \
 ros-kinetic-bond \
 ros-kinetic-bond-core \
@@ -157,4 +169,10 @@ ros-kinetic-webkit-dependency \
 ros-kinetic-pcl-ros \
 ros-kinetic-joy \
 ros-kinetic-webots-ros \
+ros-kinetic-ifm3d \
 liborocos-kdl-dev
+
+# cleanup
+RUN rm -rf /var/lib/apt/lists/
+
+CMD ["/bin/bash"]
