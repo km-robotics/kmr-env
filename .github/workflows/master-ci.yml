@@ -64,6 +64,5 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./kinetic/docker
           file: ./kinetic/docker/Dockerfile
-          target: prod
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.prep.outputs.tags }}
