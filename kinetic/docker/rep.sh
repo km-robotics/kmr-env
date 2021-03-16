@@ -33,5 +33,9 @@ else
     echo "No application environment to source, map catkin workspace into the container, set APP_WS env variable and perform catkin make."
 fi
 
+if [ -d "$APP_WS" ]; then
+    cd "$APP_WS"
+fi
+
 # exec provided command
 exec "$@"
