@@ -8,7 +8,7 @@ Tools and resources installed in the environment:
 
 * ROS "desktop full"
 * Nvidia tools derived from [cudagl Nvidia Docker images](https://hub.docker.com/r/nvidia/cudagl)
-* [Webots simulator](https://cyberbotics.com/)
+* [Webots simulator](https://cyberbotics.com/) in `/opt/webots`
 
 ## Docker images
 
@@ -18,39 +18,55 @@ Those common environment images and the repository itself are __PUBLIC__.
 
 In the future there should be images for each used ROS version, right now there is support only for ROS Kinetic.
 
-Usage:
+### Get the image
 
 ```bash
 docker pull ghcr.io/km-robotics/env-kinetic:edge
 ```
 
-To run single command inside the environment:
+**Always** do this before other work, to get newest version of the container image. You can also add `--pull always` argument to `docker run` commands to enforce updating of the Docker image before running.
+
+### Daily work
+
+Suppose that you have your Catkin workspace in `~/robocon_ws`.
+
+To run single command inside the environment with mapped Catkin workspace and under the same user as in the host system:
 
 ```bash
-docker run -ti --rm ghcr.io/km-robotics/env-kinetic:edge CMD
+docker run -ti --rm --net=host --device=/dev/dri --env="DISPLAY" -v $HOME/.Xauthority:/$HOME/.Xauthority:rw -v /etc/passwd:/etc/passwd:ro --user $UID -v $HOME/robocon_ws:$HOME/robocon_ws -e APP_WS=$HOME/robocon_ws ghcr.io/km-robotics/env-kinetic:edge CMD
 ```
 
-To start an instance capable of running multiple commands and map /home directory into the instance:
+To start an instance capable of running multiple commands:
 
 ```bash
-docker run -d -ti --name=kmr1 --net=host --device=.dev/dri --env="DISPLAY" -v $HOME/.Xauthority:/root/.Xauthority:rw -v /home:/home ghcr.io/km-robotics/env-kinetic:edge bash
+docker run -d -ti --name=kmr1 --net=host --device=/dev/dri --env="DISPLAY" -v $HOME/.Xauthority:/$HOME/.Xauthority:rw -v /etc/passwd:/etc/passwd:ro --user $UID -v $HOME/robocon_ws:$HOME/robocon_ws -e APP_WS=$HOME/robocon_ws ghcr.io/km-robotics/env-kinetic:edge bash
 
 # in first terminal
-docker exec kmr1 bash
-  source ...setup.bash
+docker exec -ti kmr1 bash
+  source /rep.sh
   roscore
 
 # in second terminal
-docker exec kmr1 bash
-  source ...setup.bash
+docker exec -ti kmr1 bash
+  source /rep.sh
   rviz
 
 docker rm -f kmr1
 ```
 
-Or you can open just one shell into the container and use `byobu` there to multiplex the terminal.
+To start an environment capable of running multiple commands in several terminals multiplexed by Byobu:
 
-> :warning: The problem is that you are running as `root` inside the container and user IDs are not mapped between the host system and the container. Therefore any changes made to the filesystem under /home/... are then problematic back in the host system.
+```bash
+docker run -ti --rm --net=host --device=/dev/dri --env="DISPLAY" -v $HOME/.Xauthority:/$HOME/.Xauthority:rw -v /etc/passwd:/etc/passwd:ro --user $UID -v $HOME/robocon_ws:$HOME/robocon_ws -e APP_WS=$HOME/robocon_ws ghcr.io/km-robotics/env-kinetic:edge byobu
+
+# open new terminal with F2 or Ctrl+A,C, switch terminals back and forth with F3 or Ctrl+A,P and F4 or Ctrl+A,N, close terminal with Ctrl+A,K; use Esc,number instead of Fnumber in applications such as Midnight Commander
+roscore # in 1st terminal
+rviz # in 2nd terminal
+
+# F6 to exit from the environment
+```
+
+Of course you can set an alias for those commands by using `alias` command. Persist those aliases in your `.bashrc` file. You can even create Bash functions to create "aliases" with arguments.
 
 ### Other useful tools
 
