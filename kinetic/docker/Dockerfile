@@ -92,8 +92,10 @@ RUN apt-add-repository -y ppa:git-core/ppa && apt update && apt install -y git
 
 # ROS packages
 RUN apt update && apt install -y \
+    bash-completion \
     liborocos-kdl-dev \
     python-catkin-tools \
+    rosbash \
     ros-kinetic-actionlib-tutorials \
     ros-kinetic-driver-base \
     ros-kinetic-bond \
@@ -268,6 +270,9 @@ WORKDIR /app_ws
 
 # cleanup
 RUN rm -rf /var/lib/apt/lists/
+
+# allow interactive installations of packages when container is used by regular user
+ENV DEBIAN_FRONTEND=
 
 ENTRYPOINT ["/rep.sh"]
 
