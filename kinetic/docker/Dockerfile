@@ -257,6 +257,7 @@ RUN mkdir -p /root/.byobu && touch /root/.byobu/.welcome-displayed
 
 # application catkin workspace, to be mapped into the container
 RUN mkdir -p /app_ws
+ENV APP_WS=/app_ws
 
 # entrypoint script that will create pseudo home user directory with basic configuration of some tools and will source ROS environments
 ADD rep.sh /

@@ -23,14 +23,14 @@ echo "Sourcing ROS environment for $ROS_DISTRO..."
 source "/opt/ros/$ROS_DISTRO/setup.bash"
 
 # setup application catkin workspace environment
-if [ -f "/app_ws/setup.sh" ]; then
-    echo "Sourcing application environment..."
-    source "/app_ws/setup.sh"
-elif [ -f "/app_ws/devel/setup.bash" ]; then
-    echo "Sourcing application environment..."
-    source "/app_ws/devel/setup.bash"
+if [ -f "$APP_WS/setup.sh" ]; then
+    echo "Sourcing application environment from $APP_WS/setup.sh..."
+    source "$APP_WS/setup.sh"
+elif [ -f "$APP_WS/devel/setup.bash" ]; then
+    echo "Sourcing application environment from $APP_WS/devel/setup.bash..."
+    source "$APP_WS/devel/setup.bash"
 else
-    echo "No application environment to source, map catkin workspace into the container and perform catkin make."
+    echo "No application environment to source, map catkin workspace into the container, set APP_WS env variable and perform catkin make."
 fi
 
 # exec provided command
