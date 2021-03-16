@@ -86,6 +86,10 @@ ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs
 
 # ==== end ====
 
+# latest git
+RUN apt update && apt install -y python-software-properties software-properties-common
+RUN apt-add-repository -y ppa:git-core/ppa && apt update && apt install -y git
+
 # ROS packages
 RUN apt update && apt install -y \
 ros-kinetic-actionlib-tutorials \
@@ -237,9 +241,33 @@ ros-kinetic-pcl-ros \
 ros-kinetic-joy \
 ros-kinetic-webots-ros \
 ros-kinetic-ifm3d \
+ros-kinetic-driver-base \
 liborocos-kdl-dev
+
+# allow running sudo under non-privileged user in entrypoint script to create, copy and change ownership of files and directories
+# should not matter because one is already able to run code inside docker container as root
+RUN echo "ALL ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers
+
+# Webots config
+RUN mkdir -p /root/.config/Cyberbotics
+ADD Webots-R2020b.conf /root/.config/Cyberbotics/
+
+# Byobu config
+RUN mkdir -p /root/.byobu && touch /root/.byobu/.welcome-displayed
+
+# application catkin workspace, to be mapped into the container
+RUN mkdir -p /app_ws
+
+# entrypoint script that will create pseudo home user directory with basic configuration of some tools and will source ROS environments
+ADD rep.sh /
+RUN chmod ugo+x /rep.sh
+
+WORKDIR /app_ws
+
 
 # cleanup
 RUN rm -rf /var/lib/apt/lists/
 
-CMD ["/bin/bash"]
+ENTRYPOINT ["/rep.sh"]
+
+CMD ["/usr/bin/byobu"]
