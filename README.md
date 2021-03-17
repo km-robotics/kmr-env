@@ -42,22 +42,22 @@ To start an instance capable of running multiple commands:
 docker run -d -ti --name=kmr1 --net=host --device=/dev/dri --env="DISPLAY" -v $HOME/.Xauthority:/$HOME/.Xauthority:rw -v /etc/passwd:/etc/passwd:ro --user $UID -v $HOME/robocon_ws:$HOME/robocon_ws -e APP_WS=$HOME/robocon_ws ghcr.io/km-robotics/env-kinetic:edge bash
 
 # in first terminal
-docker exec -ti kmr1 bash
+docker exec -ti kmr1 bash -l
   source /rep.sh
   roscore
 
 # in second terminal
-docker exec -ti kmr1 bash
+docker exec -ti kmr1 bash -l
   source /rep.sh
   rviz
 
 docker rm -f kmr1
 ```
 
-To start an environment capable of running multiple commands in several terminals multiplexed by Byobu:
+To start an environment capable of running multiple commands in several terminals multiplexed by Byobu (command not specified, because `byobu -l -2` is a default command for this image):
 
 ```bash
-docker run -ti --rm --net=host --device=/dev/dri --env="DISPLAY" -v $HOME/.Xauthority:/$HOME/.Xauthority:rw -v /etc/passwd:/etc/passwd:ro --user $UID -v $HOME/robocon_ws:$HOME/robocon_ws -e APP_WS=$HOME/robocon_ws ghcr.io/km-robotics/env-kinetic:edge byobu
+docker run -ti --rm --net=host --device=/dev/dri --env="DISPLAY" -v $HOME/.Xauthority:/$HOME/.Xauthority:rw -v /etc/passwd:/etc/passwd:ro --user $UID -v $HOME/robocon_ws:$HOME/robocon_ws -e APP_WS=$HOME/robocon_ws ghcr.io/km-robotics/env-kinetic:edge
 
 # open new terminal with F2 or Ctrl+A,C, switch terminals back and forth with F3 or Ctrl+A,P and F4 or Ctrl+A,N, close terminal with Ctrl+A,K; use Esc,number instead of Fnumber in applications such as Midnight Commander
 roscore # in 1st terminal

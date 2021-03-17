@@ -276,4 +276,6 @@ ENV DEBIAN_FRONTEND=
 
 ENTRYPOINT ["/rep.sh"]
 
-CMD ["/usr/bin/byobu"]
+# -l to use "login shell" which will process default profile/bashrc and enable bash completion
+# -2 to force terminal with colors support
+CMD ["/usr/bin/byobu", "-l", "-2"]
