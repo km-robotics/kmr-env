@@ -3,7 +3,7 @@ FROM osrf/ros:kinetic-desktop-full
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
 
-RUN apt update && apt install -y apt-utils wget curl htop iotop iftop tcpdump byobu mc
+RUN apt update && apt install -y apt-utils wget curl htop iotop iftop tcpdump byobu mc less
 
 # Webots dependencies
 # from https://github.com/cyberbotics/webots-docker/blob/master/Dockerfile
@@ -15,6 +15,7 @@ RUN wget -O webots.tar.bz2 "https://github.com/cyberbotics/webots/releases/downl
 RUN tar -xjf webots.tar.bz2 -C /opt && rm -rf webots.tar.bz2
 ENV WEBOTS_HOME=/opt/webots
 ENV QTWEBENGINE_DISABLE_SANDBOX=1
+ENV AUDIODEV=null
 
 # Install X virtual framebuffer to be able to use Webots without GPU and GUI (e.g. CI)
 RUN apt update && apt install --yes xvfb
@@ -256,6 +257,7 @@ ADD Webots-R2020b.conf /root/.config/Cyberbotics/
 
 # Byobu config
 RUN mkdir -p /root/.byobu && touch /root/.byobu/.welcome-displayed
+ADD keybindings.tmux /root/.byobu/keybindings.tmux
 
 # application catkin workspace, to be mapped into the container
 RUN mkdir -p /app_ws
