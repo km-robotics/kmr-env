@@ -93,14 +93,14 @@ ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs
 # ==== end ====
 
 # latest git
-RUN apt update && apt install -y python-software-properties software-properties-common
+RUN apt update && apt install -y software-properties-common
 RUN apt-add-repository -y ppa:git-core/ppa && apt update && apt install -y git
 
 # ROS packages
 RUN apt update && apt install -y \
     bash-completion \
     liborocos-kdl-dev \
-    python3-catkin-tools \
+    python-catkin-tools \
     rosbash \
     ros-noetic-actionlib-tutorials \
     ros-noetic-driver-base \
