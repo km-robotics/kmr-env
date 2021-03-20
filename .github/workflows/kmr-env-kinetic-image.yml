@@ -13,6 +13,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      # https://github.com/apache/flink/blob/master/tools/azure-pipelines/free_disk_space.sh
+      - name: Free up disk space
+        id: freeupspace
+        run: |
+          echo "Listing 10 largest packages"
+          dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n | tail -n 10
+          df -h
+          echo "Removing large packages"
+          sudo apt-get remove -y '^ghc-9.*'
+          sudo apt-get remove -y '^ghc-8.*'
+          sudo apt-get remove -y '^dotnet-.*'
+          sudo apt-get remove -y '^llvm-.*'
+          sudo apt-get remove -y 'php.*'
+          sudo apt-get remove -y azure-cli google-cloud-sdk hhvm google-chrome-stable firefox powershell mono-devel monodoc-http
+          sudo apt-get autoremove -y
+          sudo apt-get clean
+          df -h
+          echo "Removing large directories"
+          # deleting 15GB
+          rm -rf /usr/share/dotnet/
+          df -h
+
       - name: Prepare
         id: prep
         run: |
@@ -34,13 +56,13 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@v1
 
-#      - name: Cache Docker layers
-#        uses: actions/cache@v2
-#        with:
-#          path: /tmp/.buildx-cache
-#          key: ${{ runner.os }}-buildx-${{ github.sha }}
-#          restore-keys: |
-#            ${{ runner.os }}-buildx-
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
 
       - name: Login to ghcr
         if: github.event_name != 'pull_request'
@@ -68,5 +90,5 @@ jobs:
           file: ./kinetic/docker/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.prep.outputs.tags }}
-#          cache-from: type=registry,ref=user/app:latest
-#          cache-to: type=inline
+          cache-from: type=registry,ref=user/app:latest
+          cache-to: type=inline
