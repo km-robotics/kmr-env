@@ -99,8 +99,6 @@ RUN apt-add-repository -y ppa:git-core/ppa && apt update && apt install -y git
 RUN apt update && apt install -y \
     bash-completion \
     liborocos-kdl-dev \
-    python-catkin-tools \
-    rosbash \
     ros-noetic-actionlib-tutorials \
     ros-noetic-bond \
     ros-noetic-bond-core \
