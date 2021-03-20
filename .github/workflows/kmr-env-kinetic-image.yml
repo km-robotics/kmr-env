@@ -1,9 +1,10 @@
-name: KMR-ENV Kinetic Docker image
+name: Kinetic Docker image
 
 on:
   push:
     branches: master
     paths: kinetic/**
+  workflow_dispatch:
 
 jobs:
   docker:

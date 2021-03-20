@@ -1,9 +1,10 @@
-name: KMR-ENV Noetic Docker image
+name: Noetic Docker image
 
 on:
   push:
     branches: master
     paths: noetic/**
+  workflow_dispatch:
 
 jobs:
   docker:
