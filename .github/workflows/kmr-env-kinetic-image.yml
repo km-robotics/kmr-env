@@ -68,3 +68,5 @@ jobs:
           file: ./kinetic/docker/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.prep.outputs.tags }}
+          cache-from: type=registry,ref=user/app:latest
+          cache-to: type=inline
