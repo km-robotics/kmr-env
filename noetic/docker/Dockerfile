@@ -102,7 +102,6 @@ RUN apt update && apt install -y \
     python-catkin-tools \
     rosbash \
     ros-noetic-actionlib-tutorials \
-    ros-noetic-driver-base \
     ros-noetic-bond \
     ros-noetic-bond-core \
     ros-noetic-bondcpp \
@@ -133,17 +132,12 @@ RUN apt update && apt install -y \
     ros-noetic-image-rotate \
     ros-noetic-image-transport-plugins \
     ros-noetic-image-view \
-    ros-noetic-industrial-core \
     ros-noetic-industrial-robot-status-controller \
     ros-noetic-industrial-robot-status-interface \
     ros-noetic-interactive-marker-tutorials \
     ros-noetic-joint-limits-interface \
-    ros-noetic-joint-qualification-controllers \
     ros-noetic-joint-state-controller \
-    ros-noetic-joint-trajectory-action \
-    ros-noetic-joint-trajectory-action-tools \
     ros-noetic-joint-trajectory-controller \
-    ros-noetic-joint-trajectory-generator \
     ros-noetic-joy \
     ros-noetic-laser-assembler \
     ros-noetic-laser-filters \
@@ -153,7 +147,6 @@ RUN apt update && apt install -y \
     ros-noetic-moveit \
     ros-noetic-moveit-python \
     ros-noetic-moveit-resources \
-    ros-noetic-moveit-sim-controller \
     ros-noetic-moveit-visual-tools \
     ros-noetic-nodelet-core \
     ros-noetic-nodelet-topic-tools \
@@ -170,7 +163,6 @@ RUN apt update && apt install -y \
     ros-noetic-qt-gui-py-common \
     ros-noetic-qwt-dependency \
     ros-noetic-robot \
-    ros-noetic-robot-model \
     ros-noetic-ros \
     ros-noetic-ros-base \
     ros-noetic-ros-comm \
@@ -233,7 +225,6 @@ RUN apt update && apt install -y \
     ros-noetic-stage-ros \
     ros-noetic-stereo-image-proc \
     ros-noetic-stereo-msgs \
-    ros-noetic-tf-tools \
     ros-noetic-tf2-eigen \
     ros-noetic-tf2-geometry-msgs \
     ros-noetic-tf2-tools \
