@@ -1,8 +1,9 @@
-name: Master Branch CI
+name: KMR-ENV Kinetic Docker image
 
 on:
   push:
     branches: master
+    paths: kinetic/**
 
 jobs:
   docker:
