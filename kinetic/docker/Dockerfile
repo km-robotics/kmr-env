@@ -1,5 +1,7 @@
 FROM osrf/ros:kinetic-desktop-full
 
+# Ubuntu 16.04 Xenial
+
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
 
