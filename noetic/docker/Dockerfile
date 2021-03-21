@@ -245,6 +245,9 @@ RUN apt update && apt install -y \
     ros-noetic-webkit-dependency \
     ros-noetic-webots-ros
 
+# repair not working bash completion for ROS (rosbash not present in /etc/bash_completion.d/)
+RUN ln -s /opt/ros/noetic/share/rosbash/rosbash /etc/bash_completion.d/rosbash
+
 # allow running sudo under non-privileged user in entrypoint script to create, copy and change ownership of files and directories
 # should not matter because one is already able to run code inside docker container as root
 RUN echo "ALL ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers
