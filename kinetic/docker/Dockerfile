@@ -97,6 +97,10 @@ RUN apt update && apt install -y \
     bash-completion \
     liborocos-kdl-dev \
     python-catkin-tools \
+    python-rosinstall \
+    python-rosinstall-generator \
+    python-vcstool \
+    python-wstool \
     rosbash \
     ros-kinetic-actionlib-tutorials \
     ros-kinetic-driver-base \
