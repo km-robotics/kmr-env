@@ -18,7 +18,7 @@ if [ "$HOME" != "/root" ]; then
     fi
     if [ ! -f "$HOME/.bash_profile" ]; then
         # enable indicative prompt
-        echo 'PS1='\''(\033[01;32mKMR $ROS_DISTRO\033[00m) ${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '\''' > "$HOME/.bash_profile"
+        echo 'PS1='\''(\[\033[01;32m\]KMR $ROS_DISTRO\[\033[00m\]) ${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '\''' > "$HOME/.bash_profile"
     fi
 fi
 
