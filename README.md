@@ -7,7 +7,7 @@ Common images and other tools to standardize development environments used in KM
 Tools and resources installed in the environment:
 
 * ROS "desktop full"
-* Nvidia tools derived from [cudagl Nvidia Docker images](https://hub.docker.com/r/nvidia/cudagl)
+* Nvidia tools derived from [cudagl Nvidia Docker images](https://hub.docker.com/r/nvidia/cudagl). You may need to install `nvidia-docker2` on the host, cf. https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#install-guide.
 * [Webots simulator](https://cyberbotics.com/) in `/opt/webots`
 
 ## Docker images
