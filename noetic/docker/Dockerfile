@@ -24,6 +24,8 @@ RUN apt update && apt install --yes xvfb
 
 # ==== from https://gitlab.com/nvidia/container-images/cuda/-/blob/master/dist/11.2.1/ubuntu20.04-x86_64/base/Dockerfile ====
 
+# nvidia-docker2 must also be installed on the host. Cf. https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#install-guide.
+
 # ==== base
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -99,7 +101,9 @@ RUN apt-add-repository -y ppa:git-core/ppa && apt update && apt install -y git
 RUN apt update && apt install -y \
     bash-completion \
     liborocos-kdl-dev \
+    python-is-python3 \
     python3-catkin-tools \
+    python3-osrf-pycommon \
     python3-rosinstall \
     python3-rosinstall-generator \
     python3-vcstool \
