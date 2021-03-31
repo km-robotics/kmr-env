@@ -5,7 +5,7 @@ FROM osrf/ros:kinetic-desktop-full
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
 
-RUN apt update && apt install -y apt-utils apt-file ping wget curl htop iotop iftop tcpdump byobu mc less aptitude
+RUN apt update && apt install -y apt-utils apt-file inetutils-ping wget curl htop iotop iftop tcpdump byobu mc less aptitude
 
 # Webots dependencies
 # from https://github.com/cyberbotics/webots-docker/blob/master/Dockerfile
