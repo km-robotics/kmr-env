@@ -13,11 +13,14 @@ RUN wget https://raw.githubusercontent.com/cyberbotics/webots/master/scripts/ins
 RUN chmod +x linux_runtime_dependencies.sh && ./linux_runtime_dependencies.sh && rm ./linux_runtime_dependencies.sh
 
 # Webots
-RUN wget -O webots.tar.bz2 "https://www.km-robotics.cz/download/webots-R2021b-JMPR-x86-64.tar.bz2"
-RUN tar -xjf webots.tar.bz2 -C /opt && rm -rf webots.tar.bz2
+RUN wget -O webots.tar.bz2 "https://www.km-robotics.cz/download/webots-R2021b-JMPR-x86-64.tar.bz2" && tar -xjf webots.tar.bz2 -C /opt && rm -rf webots.tar.bz2
 ENV WEBOTS_HOME=/opt/webots
 ENV QTWEBENGINE_DISABLE_SANDBOX=1
 ENV AUDIODEV=null
+
+# Pylon SDK
+RUN wget -O pylon.deb "https://www.baslerweb.com/fp-1615275617/media/downloads/software/pylon_software/pylon_6.2.0.21487-deb0_amd64.deb" && dpkg -i pylon.deb && rm -rf pylon.deb && apt-get -f install
+ENV PYLON_ROOT=/opt/pylon
 
 # Install X virtual framebuffer to be able to use Webots without GPU and GUI (e.g. CI)
 RUN apt update && apt install --yes xvfb
