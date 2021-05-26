@@ -13,7 +13,7 @@ RUN wget https://raw.githubusercontent.com/cyberbotics/webots/master/scripts/ins
 RUN chmod +x linux_runtime_dependencies.sh && ./linux_runtime_dependencies.sh && rm ./linux_runtime_dependencies.sh
 
 # Webots
-RUN wget -O webots.tar.bz2 "https://github.com/cyberbotics/webots/releases/download/R2021a/webots-R2021a-x86-64.tar.bz2"
+RUN wget -O webots.tar.bz2 "https://www.km-robotics.cz/download/webots-R2021b-JMPR-x86-64.tar.bz2"
 RUN tar -xjf webots.tar.bz2 -C /opt && rm -rf webots.tar.bz2
 ENV WEBOTS_HOME=/opt/webots
 ENV QTWEBENGINE_DISABLE_SANDBOX=1
