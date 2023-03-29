@@ -16,40 +16,40 @@ Docker images are placed in [GitHub Container Registry](https://github.com/orgs/
 
 Those common environment images and the repository itself are __PUBLIC__.
 
-In the future there should be images for each used ROS version, right now there is support for ROS Kinetic and ROS Noetic.
+In the future there should be images for each used ROS version, right now there is support for ROS Kinetic and ROS Noetic and ROS2 Humble.
 
 ### Get the image
 
 ```bash
-docker pull ghcr.io/km-robotics/env-kinetic:edge
+docker pull ghcr.io/km-robotics/env-humble:edge
 ```
 
 **Always** do this before other work, to get newest version of the container image. You can also add `--pull always` argument to `docker run` commands to enforce updating of the Docker image before running.
 
 ### Daily work
 
-Suppose that you have your Catkin workspace in `~/robocon_ws`.
+Suppose that you have your Colcon workspace in `~/robocon_ros2_monows`.
 
-To run single command inside the environment with mapped Catkin workspace and under the same user as in the host system:
+To run single command inside the environment with mapped Colcon workspace and under the same user as in the host system:
 
 ```bash
-docker run -ti --rm --net=host --device=/dev/dri --env="DISPLAY" -v $HOME/.Xauthority:/$HOME/.Xauthority:rw -v /etc/passwd:/etc/passwd:ro -v /etc/shadow:/etc/shadow:ro --user $UID -v $HOME/robocon_ws:$HOME/robocon_ws -e APP_WS=$HOME/robocon_ws ghcr.io/km-robotics/env-kinetic:edge CMD
+docker run -ti --rm --net=host --device=/dev/dri --env="DISPLAY" -v $HOME/.Xauthority:/$HOME/.Xauthority:rw -v /etc/passwd:/etc/passwd:ro -v /etc/shadow:/etc/shadow:ro --user $UID -v $HOME/robocon_ros2_monows:$HOME/robocon_ros2_monows -e APP_WS=$HOME/robocon_ros2_monows ghcr.io/km-robotics/env-humble:edge CMD
 ```
 
 To start an instance capable of running multiple commands:
 
 ```bash
-docker run -d -ti --name=kmr1 --net=host --device=/dev/dri --env="DISPLAY" -v $HOME/.Xauthority:/$HOME/.Xauthority:rw -v /etc/passwd:/etc/passwd:ro -v /etc/shadow:/etc/shadow:ro --user $UID -v $HOME/robocon_ws:$HOME/robocon_ws -e APP_WS=$HOME/robocon_ws ghcr.io/km-robotics/env-kinetic:edge bash
+docker run -d -ti --name=kmr1 --net=host --device=/dev/dri --env="DISPLAY" -v $HOME/.Xauthority:/$HOME/.Xauthority:rw -v /etc/passwd:/etc/passwd:ro -v /etc/shadow:/etc/shadow:ro --user $UID -v $HOME/robocon_ros2_monows:$HOME/robocon_ros2_monows -e APP_WS=$HOME/robocon_ros2_monows ghcr.io/km-robotics/env-humble:edge bash
 
 # in first terminal
 docker exec -ti kmr1 bash -l
   source /rep.sh
-  roscore
+  ros2 launch ...
 
 # in second terminal
 docker exec -ti kmr1 bash -l
   source /rep.sh
-  rviz
+  rviz2
 
 docker rm -f kmr1
 ```
@@ -57,22 +57,20 @@ docker rm -f kmr1
 To start an environment capable of running multiple commands in several terminals multiplexed by Byobu (command not specified, because `byobu -l -2` is a default command for this image):
 
 ```bash
-docker run -ti --rm --net=host --device=/dev/dri --env="DISPLAY" -v $HOME/.Xauthority:/$HOME/.Xauthority:rw -v /etc/passwd:/etc/passwd:ro -v /etc/shadow:/etc/shadow:ro --user $UID -v $HOME/robocon_ws:$HOME/robocon_ws -e APP_WS=$HOME/robocon_ws ghcr.io/km-robotics/env-kinetic:edge
+docker run -ti --rm --net=host --device=/dev/dri --env="DISPLAY" -v $HOME/.Xauthority:/$HOME/.Xauthority:rw -v /etc/passwd:/etc/passwd:ro -v /etc/shadow:/etc/shadow:ro --user $UID -v $HOME/robocon_ros2_monows:$HOME/robocon_ros2_monows -e APP_WS=$HOME/robocon_ros2_monows ghcr.io/km-robotics/env-humble:edge
 
 # open new terminal with F2 or Ctrl+A,C, switch terminals back and forth with F3 or Ctrl+A,P and F4 or Ctrl+A,N, close terminal with Ctrl+A,K; use Esc,number instead of Fnumber in applications such as Midnight Commander
-roscore # in 1st terminal
-rviz # in 2nd terminal
+ros2 launch ... # in 1st terminal
+rviz2 # in 2nd terminal
 
 # F6 to exit from the environment
 ```
 
 Of course you can set an alias for those commands by using `alias` command. Persist those aliases in your `.bashrc` file. You can even create Bash functions to create "aliases" with arguments.
 
-For **ROS Noetic** just change `env-kinetic` to `env-noetic`. For ROS Kinetic image there is no need to map `/etc/shadow` into the container. ROS Noetic image requires it.
-
 ### Webots
 
-Webots simulator is installed inside the container in `/opt/webots`. You can run it from inside the container either directly (`/opt/webots/webots`) or by using ROS package `ros-$ROS_DISTRO-webots-ros`.
+Webots simulator is installed inside the container in `/opt/webots`. You can run it from inside the container either directly (`/opt/webots/webots`) or by using ROS package `ros-$ROS_DISTRO-webots-ros2`.
 
 ### Other useful tools
 
@@ -86,16 +84,16 @@ For easier running of GUI tools and seamless binding with local (host) environme
 You can create Singularity image from the Docker image:
 
 ```bash
-singularity build kmr-env-kinetic.simg docker://ghcr.io/km-robotics/env-kinetic:edge
+singularity build kmr-env-humble.simg docker://ghcr.io/km-robotics/env-humble:edge
 ```
 
 Then you can launch something using this image, with your home directory automatically mapped into the container:
 
 ```bash
-singularity shell kmr-env-kinetic.simg
+singularity shell kmr-env-humble.simg
   source ...setup.bash
-  roscore &
-  rviz
+  ros2 launch ... &
+  rviz2
   /opt/webots/webots
 ```
 
