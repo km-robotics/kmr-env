@@ -34,6 +34,9 @@ To run single command inside the environment with mapped Colcon workspace and un
 
 ```bash
 docker run -ti --rm --net=host --device=/dev/dri --env="DISPLAY" -v $HOME/.Xauthority:/$HOME/.Xauthority:rw -v /etc/passwd:/etc/passwd:ro -v /etc/shadow:/etc/shadow:ro --user $UID -v $HOME/robocon_ros2_monows:$HOME/robocon_ros2_monows -e APP_WS=$HOME/robocon_ros2_monows ghcr.io/km-robotics/env-humble:edge CMD
+
+# add more volume mounts for extra stuff:
+# -v $HOME/.config/mc:$HOME/.config/mc -v $HOME/.bashrc:$HOME/.bashrc -v $HOME/.profile:$HOME/.profile -v $HOME/.bash_history:$HOME/.bash_history -v $HOME/.git-credentials:$HOME/.git-credentials -v $HOME/.gitconfig:$HOME/.gitconfig -v $HOME/.config/robocon:$HOME/.config/robocon
 ```
 
 To start an instance capable of running multiple commands:
@@ -43,12 +46,12 @@ docker run -d -ti --name=kmr1 --net=host --device=/dev/dri --env="DISPLAY" -v $H
 
 # in first terminal
 docker exec -ti kmr1 bash -l
-  source /rep.sh
+  . /source_app.sh
   ros2 launch ...
 
 # in second terminal
 docker exec -ti kmr1 bash -l
-  source /rep.sh
+  . /source_app.sh
   rviz2
 
 docker rm -f kmr1

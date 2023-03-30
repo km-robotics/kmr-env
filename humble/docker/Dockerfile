@@ -75,8 +75,10 @@ RUN apt install -y \
     ros-humble-warehouse-ros \
     ros-humble-xacro
 
-# repair not working bash completion for ROS (rosbash not present in /etc/bash_completion.d/)
-#RUN ln -s /opt/ros/noetic/share/rosbash/rosbash /etc/bash_completion.d/rosbash
+# additional rosdep sources
+RUN bash -c 'echo -e "yaml https://raw.githubusercontent.com/km-robotics/rosdep_kmr_public/master/rosdep/python.yaml" > /etc/ros/rosdep/sources.list.d/19-kmr-public.list'
+# rosdep update
+RUN rosdep update --include-eol-distros
 
 # allow running sudo under non-privileged user in entrypoint script to create, copy and change ownership of files and directories
 # should not matter because one is already able to run code inside docker container as root
@@ -89,14 +91,20 @@ ADD Webots-R2023a.conf /root/.config/Cyberbotics/
 # Byobu config
 RUN mkdir -p /root/.byobu && touch /root/.byobu/.welcome-displayed
 ADD keybindings.tmux /root/.byobu/keybindings.tmux
+ADD windows.tmux /root/.byobu/windows.tmux
+ADD .tmux.conf /root/.byobu/.tmux.conf
 
 # application catkin workspace, to be mapped into the container
 RUN mkdir -p /app_ws
 ENV APP_WS=/app_ws
 
-# entrypoint script that will create pseudo home user directory with basic configuration of some tools and will source ROS environments
-ADD rep.sh /
-RUN chmod ugo+x /rep.sh
+# entrypoint script that will create pseudo home user directory with basic configuration of some tools
+ADD entrypoint.sh /
+RUN chmod ugo+x /entrypoint.sh
+
+# helper script to be sourced after shell starts up (and .bashrc is processed) via tmux predefined windows
+ADD source_app.sh /
+RUN chmod ugo+x /source_app.sh
 
 WORKDIR /app_ws
 
@@ -104,11 +112,23 @@ WORKDIR /app_ws
 # cleanup
 RUN rm -rf /var/lib/apt/lists/
 
+
 # allow interactive installations of packages when container is used by regular user
 ENV DEBIAN_FRONTEND=
 
-ENTRYPOINT ["/rep.sh"]
+# enable colors in terminal
+ENV TERM=xterm-256color
 
-# -l to use "login shell" which will process default profile/bashrc and enable bash completion
-# -2 to force terminal with colors support
-CMD ["/usr/bin/byobu", "-l", "-2"]
+
+ENTRYPOINT ["/entrypoint.sh"]
+
+# launch entrypoint (prepared pseudo home directory)
+# that execs bash as a non-login shell (does not process .bashrc) 
+# then from it launch byobu
+#  -2 to force terminal with colors support
+# byobu will launch shell inside itself via default-command / default-shell (will process .bashrc and set environment variables, ...)
+#  .bashrc has to be provided by the user (volume mount)
+# byobu windows.tmux config will launch one window and source /source_app.sh in it, which will go into $APP_WS directory
+#  and source ROS and application environment if present, bash completion will be setup and not overriden by anything
+#  (because this is the last step)
+CMD ["bash", "-c", "/usr/bin/byobu", "-2"]
