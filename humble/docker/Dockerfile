@@ -5,7 +5,7 @@ FROM ghcr.io/km-robotics/althack-ros2-humble-dev_cudagl_virtualgl:edge
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=linux
 
-RUN apt update && apt install -y apt-utils apt-file inetutils-ping wget curl htop iotop iftop tcpdump byobu mc less aptitude
+RUN apt update && apt install -y apt-utils apt-file inetutils-ping wget curl htop iotop iftop tcpdump byobu mc less aptitude grc
 
 # Webots dependencies
 # from https://github.com/cyberbotics/webots-docker/blob/master/Dockerfile
