@@ -23,14 +23,14 @@ RUN wget -O pylon.deb "https://www.baslerweb.com/fp-1615275617/media/downloads/s
 ENV PYLON_ROOT=/opt/pylon
 
 # Install X virtual framebuffer to be able to use Webots without GPU and GUI (e.g. CI)
-RUN apt install --yes xvfb
+RUN apt update && apt install --yes xvfb
 
 # ROS packages basic set for desktop development
-RUN apt install -y \
+RUN apt update && apt install -y \
     ros-humble-desktop-full
 
 # ROS packages taken from JM Galactic install as of 20230329
-RUN apt install -y \
+RUN apt update && apt install -y \
     ros-humble-ackermann-msgs \
     ros-humble-backward-ros \
     ros-humble-camera-calibration-parsers \
@@ -73,7 +73,25 @@ RUN apt install -y \
     ros-humble-urdfdom-py \
     ros-humble-vision-msgs \
     ros-humble-warehouse-ros \
-    ros-humble-xacro
+    ros-humble-xacro \
+    ros-humble-orocos-kdl-vendor \
+    freeglut3-dev \
+    libomp-dev \
+    ntpdate \
+    python3-pymodbus \
+    python3-collada \
+    python3-transitions \
+    python3-pygraphviz \
+    python3-socketio
+
+RUN pip install -U \
+    transforms3d \
+    python-json-logger \
+    watchdog \
+    simplejpeg \
+    datadog \
+    safer \
+    streamz
 
 # additional rosdep sources
 RUN bash -c 'echo -e "yaml https://raw.githubusercontent.com/km-robotics/rosdep_kmr_public/master/rosdep/python.yaml" > /etc/ros/rosdep/sources.list.d/19-kmr-public.list'
@@ -109,8 +127,8 @@ RUN chmod ugo+x /source_app.sh
 WORKDIR /app_ws
 
 
-# cleanup
-RUN rm -rf /var/lib/apt/lists/
+# NO cleanup so that we can run apt install right away while using the image
+#RUN rm -rf /var/lib/apt/lists/
 
 
 # allow interactive installations of packages when container is used by regular user
