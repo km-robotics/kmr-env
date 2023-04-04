@@ -95,7 +95,7 @@ RUN pip install -U \
 
 # additional rosdep sources
 RUN bash -c 'echo -e "yaml https://raw.githubusercontent.com/km-robotics/rosdep_kmr_public/master/rosdep/python.yaml" > /etc/ros/rosdep/sources.list.d/19-kmr-public.list'
-# rosdep update
+# rosdep update (run under root and then copied to user's home via entrypoint.sh when the image is run)
 RUN rosdep update --include-eol-distros
 
 # allow running sudo under non-privileged user in entrypoint script to create, copy and change ownership of files and directories

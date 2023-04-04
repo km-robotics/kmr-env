@@ -9,14 +9,27 @@ if [ "$HOME" != "/root" ]; then
     mkdir -p "$HOME"
     sudo chown $UID "$HOME"
     if [ ! -d "$HOME/.config" ]; then
-        echo "Copying Webots configuration into newly created $HOME..."
-        sudo cp -r /root/.config "$HOME/"
+        mkdir -p "$HOME/.config"
         sudo chown -R $UID "$HOME/.config"
+    fi
+    if [ ! -d "$HOME/.config/Cyberbotics" ]; then
+        echo "Copying Webots configuration into newly created $HOME..."
+        sudo cp -r /root/.config/Cyberbotics "$HOME/.config/"
+        sudo chown -R $UID "$HOME/.config/Cyberbotics"
     fi
     if [ ! -d "$HOME/.byobu" ]; then
         echo "Copying Byobu configuration into newly created $HOME..."
         sudo cp -r /root/.byobu "$HOME/"
         sudo chown -R $UID "$HOME/.byobu"
+    fi
+    if [ ! -d "$HOME/.ros" ]; then
+        mkdir -p "$HOME/.ros"
+        sudo chown -R $UID "$HOME/.ros"
+    fi
+    if [ ! -d "$HOME/.ros/rosdep" ]; then
+        echo "Copying rosdep data into newly created $HOME..."
+        sudo cp -r /root/.ros/rosdep "$HOME/.ros/"
+        sudo chown -R $UID "$HOME/.ros/rosdep"
     fi
     if [ ! -f "$HOME/.bash_profile" ]; then
         # enable indicative prompt
