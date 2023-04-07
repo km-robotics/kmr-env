@@ -7,6 +7,9 @@ ENV TERM=linux
 
 RUN apt update && apt install -y apt-utils apt-file inetutils-ping wget curl htop iotop iftop tcpdump byobu mc less aptitude grc
 
+# install Docker to be used to control host's Docker daemon if neccessary
+RUN curl -fsSL https://get.docker.com | bash
+
 # Webots dependencies
 # from https://github.com/cyberbotics/webots-docker/blob/master/Dockerfile
 RUN wget https://raw.githubusercontent.com/cyberbotics/webots/master/scripts/install/linux_runtime_dependencies.sh
