@@ -12,6 +12,14 @@ if [ "$HOME" != "/root" ]; then
         mkdir -p "$HOME/.config"
         sudo chown -R $UID "$HOME/.config"
     fi
+    if [ ! -d "$HOME/.local" ]; then
+        mkdir -p "$HOME/.local"
+        sudo chown -R $UID "$HOME/.local"
+    fi
+    if [ ! -d "$HOME/.local/bin" ]; then
+        mkdir -p "$HOME/.local/bin"
+        sudo chown -R $UID "$HOME/.local/bin"
+    fi
     if [ ! -d "$HOME/.config/Cyberbotics" ]; then
         echo "Copying Webots configuration into newly created $HOME..."
         sudo cp -r /root/.config/Cyberbotics "$HOME/.config/"

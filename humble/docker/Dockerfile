@@ -99,7 +99,12 @@ RUN pip install -U \
 
 # install additional useful packages AFTER ROS (allows faster rebuilds of this image when just adding some useful package)
 RUN RUN apt update && apt install -y \
-    python3-ipython
+    python3-ipython \
+    bpython
+
+# and useful pip packages
+RUN pip install -U \
+    xonsh
 
 # additional rosdep sources
 RUN bash -c 'echo -e "yaml https://raw.githubusercontent.com/km-robotics/rosdep_kmr_public/master/rosdep/python.yaml" > /etc/ros/rosdep/sources.list.d/19-kmr-public.list'
