@@ -98,7 +98,7 @@ RUN pip install -U \
     streamz
 
 # install additional useful packages AFTER ROS (allows faster rebuilds of this image when just adding some useful package)
-RUN RUN apt update && apt install -y \
+RUN apt update && apt install -y \
     python3-ipython \
     bpython
 
