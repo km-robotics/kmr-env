@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# check if PATH contains ~/.local/bin, if not add it
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    echo "Adding $HOME/.local/bin to PATH..."
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+
+# install ipython via pip if not installed
+if ! command -v ipython &> /dev/null; then
+    echo "Installing ipython..."
+    pip3 install --user ipython
+fi
+
 # setup ROS environment
 echo "Sourcing ROS environment for $ROS_DISTRO..."
 source "/opt/ros/$ROS_DISTRO/setup.bash"
