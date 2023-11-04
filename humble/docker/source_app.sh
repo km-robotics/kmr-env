@@ -6,10 +6,12 @@ if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
     export PATH="$HOME/.local/bin:$PATH"
 fi
 
-# install ipython via pip if not installed
+# install ipython via pip to local user directories
+# force install because it's possible that ipython is already installed in the image
+# but because of using host system bash profile, it won't be found
 if ! command -v ipython &> /dev/null; then
     echo "Installing ipython..."
-    pip3 install --user ipython
+    pip3 install --user --force ipython
 fi
 
 # setup ROS environment

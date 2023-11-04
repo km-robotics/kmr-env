@@ -81,6 +81,7 @@ RUN apt update && apt install -y \
     ros-humble-orocos-kdl-vendor \
     freeglut3-dev \
     libomp-dev \
+    liblua5.4-dev \
     ntpdate \
     python3-pymodbus \
     python3-collada \
