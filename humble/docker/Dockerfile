@@ -43,6 +43,7 @@ RUN apt update && apt install -y \
     ros-humble-control-toolbox \
     ros-humble-controller-manager \
     ros-humble-controller-manager-msgs \
+    ros-humble-diagnostic-updater \
     ros-humble-diff-drive-controller \
     ros-humble-eigen-stl-containers \
     ros-humble-foxglove-bridge \
