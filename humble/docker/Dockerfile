@@ -37,6 +37,7 @@ RUN apt update && apt install -y \
 RUN apt update && apt install -y \
     ros-humble-ackermann-msgs \
     ros-humble-ament-clang-format \
+    ros-humble-ament-cmake-google-benchmark \
     ros-humble-backward-ros \
     ros-humble-camera-calibration-parsers \
     ros-humble-control-msgs \
@@ -48,6 +49,7 @@ RUN apt update && apt install -y \
     ros-humble-eigen-stl-containers \
     ros-humble-foxglove-bridge \
     ros-humble-foxglove-msgs \
+    ros-humble-google-benchmark-vendor \
     ros-humble-graph-msgs \
     ros-humble-gripper-controllers \
     ros-humble-image-proc \
@@ -63,6 +65,7 @@ RUN apt update && apt install -y \
     ros-humble-object-recognition-msgs \
     ros-humble-octomap \
     ros-humble-octomap-msgs \
+    ros-humble-osqp-vendor \
     ros-humble-position-controllers \
     ros-humble-random-numbers \
     ros-humble-ros-testing \
@@ -73,6 +76,7 @@ RUN apt update && apt install -y \
     ros-humble-rqt-runtime-monitor \
     ros-humble-ruckig \
     ros-humble-sensor-msgs-py \
+    ros-humble-stomp \
     ros-humble-test-msgs \
     ros-humble-tf-transformations \
     ros-humble-topic-tools \
