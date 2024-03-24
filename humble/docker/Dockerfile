@@ -109,6 +109,7 @@ RUN pip install -U \
 # install additional useful packages AFTER ROS (allows faster rebuilds of this image when just adding some useful package)
 RUN apt update && apt install -y \
     python3-ipython \
+    python3-dbg \
     bpython
 
 # additional rosdep sources
