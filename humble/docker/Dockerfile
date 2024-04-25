@@ -22,8 +22,8 @@ ENV QTWEBENGINE_DISABLE_SANDBOX=1
 ENV AUDIODEV=null
 
 # Pylon SDK
-#RUN wget -O pylon.deb "https://www.baslerweb.com/fp-1615275617/media/downloads/software/pylon_software/pylon_6.2.0.21487-deb0_amd64.deb" && dpkg -i pylon.deb && rm -rf pylon.deb && apt-get -f install
-RUN wget -O pylon.deb "https://www.km-robotics.cz/download/pylon_6.2.0.21487-deb0_amd64.deb" && dpkg -i pylon.deb && rm -rf pylon.deb && apt-get -f install
+RUN wget -O pylon.tar.gz "https://www.km-robotics.cz/download/pylon_7_4_0_14900_linux_x86_64_debs.tar.gz" && tar -xvf pylon.tar.gz && apt-get -y install ./pylon_7.4.0.14900-deb0_amd64.deb && apt-get -y install ./codemeter_7.40.4997.501_amd64.deb && rm -f INSTALL pylon_7.4.0.14900-deb0_amd64.deb codemeter_7.40.4997.501_amd64.deb pylon.tar.gz
+RUN wget -O pylon_supp1.deb "https://www.km-robotics.cz/download/pylon-supplementary-package-for-blaze-1.5.0.def07388_amd64.deb" && apt-get -y install ./pylon_supp1.deb && rm -f pylon_supp1.deb
 ENV PYLON_ROOT=/opt/pylon
 
 # Install X virtual framebuffer to be able to use Webots without GPU and GUI (e.g. CI)
