@@ -1,0 +1,136 @@
+FROM ghcr.io/km-robotics/althack-ros2-jazzy-dev_cudagl_virtualgl:edge
+
+# Slim KMR ROS2 Jazzy base image for VS Code devcontainer use.
+# Carries infra hard to reinstall ad-hoc (Webots, Pylon, Mesa PPA, ROS2 desktop-full,
+# KMR rosdep sources) but NO project-specific ROS / pip packages — those install
+# at devcontainer postCreateCommand time via rosdep against the workspace's package.xml files.
+#
+# Companion to (and divergent from) ./Dockerfile, which still builds the legacy fat
+# kmr/env-jazzy:edge for standalone (non-devcontainer) use.
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TERM=linux
+
+# update ROS2 APT key
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+
+RUN apt update && apt install -y apt-utils apt-file inetutils-ping wget curl htop iotop iftop tcpdump byobu mc less aptitude grc
+
+# install Docker CLI for control of host's Docker daemon when needed
+RUN curl -fsSL https://get.docker.com | bash
+
+# Webots dependencies
+# from https://github.com/cyberbotics/webots-docker/blob/master/Dockerfile
+RUN wget https://raw.githubusercontent.com/cyberbotics/webots/master/scripts/install/linux_runtime_dependencies.sh
+RUN chmod +x linux_runtime_dependencies.sh && ./linux_runtime_dependencies.sh && rm ./linux_runtime_dependencies.sh
+
+# Webots
+RUN wget -O webots.tar.bz2 "https://github.com/cyberbotics/webots/releases/download/R2023a/webots-R2023a-x86-64.tar.bz2" && tar -xjf webots.tar.bz2 -C /opt && rm -rf webots.tar.bz2
+ENV WEBOTS_HOME=/opt/webots
+ENV QTWEBENGINE_DISABLE_SANDBOX=1
+ENV AUDIODEV=null
+
+# Pylon SDK
+RUN wget -O pylon.tar.gz "https://www.km-robotics.cz/download/pylon_7_4_0_14900_linux_x86_64_debs.tar.gz" && tar -xvf pylon.tar.gz && apt-get -y install ./pylon_7.4.0.14900-deb0_amd64.deb && apt-get -y install ./codemeter_7.40.4997.501_amd64.deb && rm -f INSTALL pylon_7.4.0.14900-deb0_amd64.deb codemeter_7.40.4997.501_amd64.deb pylon.tar.gz
+RUN wget -O pylon_supp1.deb "https://www.km-robotics.cz/download/pylon-supplementary-package-for-blaze-1.5.0.def07388_amd64.deb" && apt-get -y install ./pylon_supp1.deb && rm -f pylon_supp1.deb
+ENV PYLON_ROOT=/opt/pylon
+
+# X virtual framebuffer for headless GUI (CI, Webots without GPU/display)
+RUN apt update && apt install --yes xvfb
+
+# ROS2 Jazzy desktop-full only — project-specific ros-jazzy-* packages
+# install via rosdep at devcontainer create time (NOT baked here).
+RUN apt update && apt install -y \
+    ros-jazzy-desktop-full
+
+# Mesa for RDNA 3.5 (Radeon 890M, gfx1150). Stock noble versions should be fine.
+RUN apt-get update \
+    && apt-get dist-upgrade -y \
+    && apt-get install -y --no-install-recommends \
+        mesa-utils \
+        mesa-utils-extra \
+        mesa-vulkan-drivers \
+        libgl1-mesa-dri \
+        libglx-mesa0 \
+        libegl-mesa0 \
+        libgbm1 \
+        vainfo \
+        vdpauinfo \
+        vulkan-tools \
+        libvulkan1 \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV LIBGL_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri \
+    MESA_LOADER_DRIVER_OVERRIDE=radeonsi \
+    AMD_VULKAN_ICD=RADV
+
+# additional rosdep sources (KMR public python.yaml — maps internal Python deps)
+RUN bash -c 'echo -e "yaml https://raw.githubusercontent.com/km-robotics/rosdep_kmr_public/master/rosdep/python.yaml" > /etc/ros/rosdep/sources.list.d/19-kmr-public.list'
+RUN rosdep update --include-eol-distros
+
+# allow sudo without password (entrypoint and ad-hoc dev convenience)
+RUN echo "ALL ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers
+
+# Webots config seed for newly-created HOME directories
+RUN mkdir -p /root/.config/Cyberbotics
+ADD Webots-R2023a.conf /root/.config/Cyberbotics/
+
+# Byobu config seed (kept for standalone use; devcontainer overrides CMD so byobu never auto-starts)
+RUN mkdir -p /root/.byobu && touch /root/.byobu/.welcome-displayed
+ADD keybindings.tmux /root/.byobu/keybindings.tmux
+ADD windows.tmux /root/.byobu/windows.tmux
+ADD .tmux.conf /root/.byobu/.tmux.conf
+
+# Non-root user for devcontainer remoteUser. UID/GID rewritten at first attach
+# by VS Code's updateRemoteUserUID feature when host UID differs.
+# Idempotent: upstream althack base may already provide a UID 1000 user (e.g. `ros`);
+# we rename it to `vscode` rather than fail with "GID/UID already exists".
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+RUN set -eux; \
+    if getent group "$USER_GID" >/dev/null; then \
+        existing_grp="$(getent group "$USER_GID" | cut -d: -f1)"; \
+        if [ "$existing_grp" != "$USERNAME" ]; then \
+            groupmod -n "$USERNAME" "$existing_grp"; \
+        fi; \
+    else \
+        groupadd --gid "$USER_GID" "$USERNAME"; \
+    fi; \
+    if getent passwd "$USER_UID" >/dev/null; then \
+        existing_user="$(getent passwd "$USER_UID" | cut -d: -f1)"; \
+        if [ "$existing_user" != "$USERNAME" ]; then \
+            usermod -l "$USERNAME" -d "/home/$USERNAME" -m "$existing_user"; \
+            usermod -g "$USER_GID" "$USERNAME"; \
+        fi; \
+    else \
+        useradd --uid "$USER_UID" --gid "$USER_GID" -m -s /bin/bash "$USERNAME"; \
+    fi; \
+    usermod -aG video,render,audio,dialout,plugdev "$USERNAME"
+
+# legacy app workspace path — devcontainer.json overrides APP_WS to /workspaces/<repo>
+RUN mkdir -p /app_ws && chown $USER_UID:$USER_GID /app_ws
+ENV APP_WS=/app_ws
+
+# entrypoint script that creates pseudo home with config seeds for non-root users
+ADD entrypoint.sh /
+RUN chmod ugo+x /entrypoint.sh
+
+# helper script to be sourced by tmux predefined windows in standalone use
+ADD source_app.sh /
+RUN chmod ugo+x /source_app.sh
+
+WORKDIR /app_ws
+
+# allow pip to install packages globally, potentially breaking system-installed ones
+# using rosdep essentially requires this and we will probably switch to Pixi anyway...
+ENV PIP_BREAK_SYSTEM_PACKAGES=1
+
+# allow interactive apt-get during dev sessions
+ENV DEBIAN_FRONTEND=
+ENV TERM=xterm-256color
+
+ENTRYPOINT ["/entrypoint.sh"]
+
+# No CMD — devcontainer.json sets `overrideCommand: true` (sleep infinity).
+# For standalone `docker run` use, pass an explicit command (e.g. `bash`, `byobu`).
