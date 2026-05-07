@@ -107,13 +107,40 @@ RUN pip install -U \
     safer \
     streamz \
     xonsh \
-    flatten-dict
+    flatten-dict \
+    xxhash \
+    orjson
 
 # install additional useful packages AFTER ROS (allows faster rebuilds of this image when just adding some useful package)
 RUN apt update && apt install -y \
     python3-ipython \
     python3-dbg \
     bpython
+
+
+# Newer Mesa for RDNA 3.5 (Radeon 890M, gfx1150). Stock jammy ships Mesa 23.2 — too old.
+# kisak/turtle PPA ships Mesa 25.0.7 stable for jammy.
+RUN add-apt-repository -y ppa:kisak/turtle \
+    && apt-get update \
+    && apt-get dist-upgrade -y \
+    && apt-get install -y --no-install-recommends \
+        mesa-utils \
+        mesa-utils-extra \
+        mesa-vulkan-drivers \
+        libgl1-mesa-dri \
+        libglx-mesa0 \
+        libegl-mesa0 \
+        libgbm1 \
+        vainfo \
+        vdpauinfo \
+        vulkan-tools \
+        libvulkan1 \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV LIBGL_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri \
+MESA_LOADER_DRIVER_OVERRIDE=radeonsi \
+AMD_VULKAN_ICD=RADV
+
 
 # additional rosdep sources
 RUN bash -c 'echo -e "yaml https://raw.githubusercontent.com/km-robotics/rosdep_kmr_public/master/rosdep/python.yaml" > /etc/ros/rosdep/sources.list.d/19-kmr-public.list'
