@@ -66,6 +66,17 @@ ENV LIBGL_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri \
     MESA_LOADER_DRIVER_OVERRIDE=radeonsi \
     AMD_VULKAN_ICD=RADV
 
+
+# fix "unknown system user 'geoclue' in statoverride file; the system user got removed" error when running apt install
+RUN apt-get purge -y geoclue-2.0
+
+# install dependencies for C++ build speedup
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ccache \
+    ninja-build \
+    mold
+
+
 # additional rosdep sources (KMR public python.yaml — maps internal Python deps)
 RUN bash -c 'echo -e "yaml https://raw.githubusercontent.com/km-robotics/rosdep_kmr_public/master/rosdep/python.yaml" > /etc/ros/rosdep/sources.list.d/19-kmr-public.list'
 RUN rosdep update --include-eol-distros
