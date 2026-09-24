@@ -66,7 +66,7 @@ ENV LIBGL_DRIVERS_PATH=/usr/lib/x86_64-linux-gnu/dri \
 
 
 # fix "unknown system user 'geoclue' in statoverride file; the system user got removed" error when running apt install
-RUN apt-get purge -y geoclue-2.0
+RUN if dpkg -s geoclue-2.0 >/dev/null 2>&1; then apt-get purge -y geoclue-2.0; fi
 
 # install dependencies for C++ build speedup
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -117,6 +117,7 @@ RUN set -eux; \
     else \
         useradd --uid "$USER_UID" --gid "$USER_GID" -m -s /bin/bash "$USERNAME"; \
     fi; \
+    getent group render >/dev/null || groupadd --system render; \
     usermod -aG video,render,audio,dialout,plugdev "$USERNAME"
 
 # legacy app workspace path — devcontainer.json overrides APP_WS to /workspaces/<repo>
