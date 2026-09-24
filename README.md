@@ -16,7 +16,7 @@ Docker images are placed in [GitHub Container Registry](https://github.com/orgs/
 
 Those common environment images and the repository itself are __PUBLIC__.
 
-In the future there should be images for each used ROS version, right now there is support for ROS Kinetic and ROS Noetic and ROS2 Jazzy.
+In the future there should be images for each used ROS version, right now there is support for ROS Kinetic, ROS Noetic, ROS2 Jazzy and ROS2 Lyrical.
 
 ### Get the image
 
